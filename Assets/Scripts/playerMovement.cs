@@ -13,7 +13,7 @@ public class playerMovement : MonoBehaviour
     public bool isGrounded;
     public LayerMask groundLayer;
     public Transform groundCheck;
-    private float groundCheckRadius = 0.5F;
+    [SerializeField] private Vector2 groundCheckSize;
 
     public float jumpForce = 13F;
 
@@ -34,12 +34,12 @@ public class playerMovement : MonoBehaviour
         if (moveInput > 0F)
         {
             playerRB.velocity = new Vector2(moveSpeed, playerRB.velocity.y);
-            ChangeSpriteDirection(0.5F);
+            ChangeSpriteDirection(0.8F);
         }
         else if (moveInput < 0F)
         {
             playerRB.velocity = new Vector2(-moveSpeed, playerRB.velocity.y);
-            ChangeSpriteDirection(-0.5F);
+            ChangeSpriteDirection(-0.8F);
         }
         else
             playerRB.velocity = new Vector2(0F, playerRB.velocity.y);
@@ -49,10 +49,9 @@ public class playerMovement : MonoBehaviour
 
     private void PlayerJump()
     {
-        if (isGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, 0.5F, groundLayer))
-            Debug.DrawRay(groundCheck.position, Vector2.down, Color.red);
+        if (isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0.5F, groundLayer))
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             playerRB.velocity = new Vector2(playerRB.velocity.x, jumpForce);
         }
@@ -65,5 +64,10 @@ public class playerMovement : MonoBehaviour
         Vector3 tempScale = transform.localScale;
         tempScale.x = direction;
         transform.localScale = tempScale;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);
     }
 }
